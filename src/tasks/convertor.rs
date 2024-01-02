@@ -1,6 +1,12 @@
 use uuid::Uuid;
 
-use crate::{types::{scheduler_input::{SIGoal, SIFilters}, scheduler_output::Slot}, utils::constants::CAL_DAYS};
+use crate::{
+    types::{
+        scheduler_input::{SIFilters, SIGoal},
+        scheduler_output::Slot,
+    },
+    utils::constants::{CalDay, CAL_DAYS},
+};
 
 impl SIFilters {
     // Create a new instance with default values
@@ -8,31 +14,33 @@ impl SIFilters {
         SIFilters {
             after_time: 0,
             before_time: 24,
-            on_days: CAL_DAYS,
+            on_days: Some(CAL_DAYS),
             not_on: Some(Vec::new()),
         }
     }
-} 
+}
 pub fn convert_into_task(goal: SIGoal) {
-    
     // Create a GoalFilters instance with default values
-    let mut default_filters = SIFilters::new_default();
+    let default_filters = SIFilters::new_default();
+    let mut filters = SIFilters::new_default();
+    match goal.filters {
+        Some(user_filters) => {
+            if user_filters.on_days.is_none() {
+                filters.on_days = default_filters.on_days;
+            }
+            if user_filters.not_on.is_none() {
+                filters.not_on = default_filters.not_on;
+            }
+        }
+        None => filters = default_filters,
+    }
+    dbg!(&goal.filters);
+    //TO check if user_filters actually modifies goal.filters
 
-    // If goal.filters is Some, update the fields with provided values
-    goal.filters.map_or_else(
-        || {}, // Do nothing when goal.filters is None
-        |filters| {
-            default_filters.after_time = filters.after_time;
-            default_filters.before_time = filters.before_time;
-            default_filters.on_days = filters.on_days.clone().unwrap_or_default();
-            default_filters.not_on = filters.not_on.clone().unwrap_or_default();
-        },
-    );
-    let valid_days: Vec<String> = default_filters
-    .on_days
-    .iter()
-    .cloned()
-    .filter(|&day| !filters.not_on.contains(&day))
-    .collect();
-
+    let valid_days: Vec<CalDay> = filters
+        .on_days
+        .unwrap()
+        .filter(|&day| !goal.filters.unwrap().not_on.unwrap().contains(&day))
+        .collect();
+    goal.filters = Some(filters);
 }
