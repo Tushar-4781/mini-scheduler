@@ -34,13 +34,9 @@ pub fn convert_into_task(goal: SIGoal) {
         }
         None => filters = default_filters,
     }
-    dbg!(&goal.filters);
-    //TO check if user_filters actually modifies goal.filters
-
     let valid_days: Vec<CalDay> = filters
-        .on_days
-        .unwrap()
-        .filter(|&day| !goal.filters.unwrap().not_on.unwrap().contains(&day))
-        .collect();
-    goal.filters = Some(filters);
+    .on_days .iter()
+    .cloned()
+    .filter(|&day| !filters.not_on.contains(&day))
+    .collect();
 }
