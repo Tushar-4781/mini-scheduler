@@ -1,8 +1,8 @@
-// use uuid::Uuid;
+use uuid::Uuid;
 
 use crate::{
     types::{
-        scheduler_input::{SIFilters, SIGoal},
+        scheduler_input::{SIFilters, SIGoal}, scheduler_output::Slot,
         // scheduler_output::Slot,
     }, utils::constants::default_on_days
 };
@@ -25,7 +25,7 @@ fn extract_filters(goal: &SIGoal) -> SIFilters {
     })
 }
 
-pub fn convert_into_task(goal: &SIGoal) {
+pub fn convert_into_task(goal: &SIGoal, calendar: &Vec<Vec<Slot>>) {
     // Create a GoalFilters instance with default values
     let filters = extract_filters(&goal);
     let on_days = filters.on_days.as_ref().map_or_else(|| Vec::new(), |v| v.clone());
@@ -36,7 +36,22 @@ pub fn convert_into_task(goal: &SIGoal) {
         .filter(|&day| !not_on.contains(&day))
         .cloned()
         .collect();
-
+    if goal.filters.as_ref().and_then(|f| f.on_days.as_ref()).is_some()
+    || goal.repeat.is_some() {
+        if goal.repeat == "daily" {
+            let task = Slot {
+                taskid: Uuid::new_v4(),
+                goalid: goal.id.clone(),
+                title: goal.title.clone(),
+                start: filters.after_time,
+                deadline: filters.before_time,
+                duration: goal.min_duration,
+            };
+            for key in 0..=6 {
+                calendar[key].push(task.clone());
+            }
+        }
+    }    
     println!("{:?}", valid_days);
 
 }
