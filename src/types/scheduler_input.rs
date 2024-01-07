@@ -18,6 +18,7 @@ pub struct SIGoal {
     pub min_duration: u32,
     pub start: Option<NaiveDateTime>,
     pub deadline: Option<NaiveDateTime>,
+    pub repeat: Option<String>,
     pub filters: Option<SIFilters>,
 }
 #[derive(Debug, Deserialize)]
