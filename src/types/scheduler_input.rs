@@ -1,15 +1,14 @@
-use chrono::{naive::NaiveDateWeeksIterator, NaiveDate, NaiveDateTime};
+use chrono::NaiveDateTime;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-use crate::utils::constants::CalDay;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct SIFilters {
     pub after_time: u32,
     pub before_time: u32,
-    pub on_days: Option<Vec<CalDay>>,
-    pub not_on: Option<Vec<CalDay>>,
+    pub on_days: Option<Vec<String>>,
+    pub not_on: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]

@@ -1,42 +1,42 @@
-use uuid::Uuid;
+// use uuid::Uuid;
 
 use crate::{
     types::{
         scheduler_input::{SIFilters, SIGoal},
-        scheduler_output::Slot,
-    },
-    utils::constants::{CalDay, CAL_DAYS},
+        // scheduler_output::Slot,
+    }, utils::constants::default_on_days
 };
 
-impl SIFilters {
-    // Create a new instance with default values
-    fn new_default() -> Self {
-        SIFilters {
-            after_time: 0,
-            before_time: 24,
-            on_days: Some(CAL_DAYS),
-            not_on: Some(Vec::new()),
-        }
-    }
+
+fn extract_filters(goal: &SIGoal) -> SIFilters {
+    let default_on_days: Vec<String> = default_on_days().iter().map(|s| s.to_string()).collect();
+    goal.filters
+    .as_ref()
+    .map(|f| SIFilters {
+        after_time: f.after_time,
+        before_time: f.before_time,
+        on_days: f.on_days.clone().or(Some(default_on_days.clone())),
+        not_on: f.not_on.clone().or(Some(Vec::new())),
+    }).unwrap_or_else(|| SIFilters {
+        after_time: 8,
+        before_time: 18,
+        on_days: Some(default_on_days),
+        not_on: Some(Vec::new()),
+    })
 }
-pub fn convert_into_task(goal: SIGoal) {
+
+pub fn convert_into_task(goal: &SIGoal) {
     // Create a GoalFilters instance with default values
-    let default_filters = SIFilters::new_default();
-    let mut filters = SIFilters::new_default();
-    match goal.filters {
-        Some(user_filters) => {
-            if user_filters.on_days.is_none() {
-                filters.on_days = default_filters.on_days;
-            }
-            if user_filters.not_on.is_none() {
-                filters.not_on = default_filters.not_on;
-            }
-        }
-        None => filters = default_filters,
-    }
-    let valid_days: Vec<CalDay> = filters
-    .on_days .iter()
-    .cloned()
-    .filter(|&day| !filters.not_on.contains(&day))
-    .collect();
+    let filters = extract_filters(&goal);
+    let on_days = filters.on_days.as_ref().map_or_else(|| Vec::new(), |v| v.clone());
+    let not_on = filters.not_on.as_ref().map_or_else(|| Vec::new(), |v| v.clone());
+
+    let valid_days: Vec<String> = on_days
+        .iter()
+        .filter(|&day| !not_on.contains(&day))
+        .cloned()
+        .collect();
+
+    println!("{:?}", valid_days);
+
 }
