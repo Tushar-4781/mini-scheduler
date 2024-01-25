@@ -1,4 +1,4 @@
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveDateTime};
 
 pub fn default_on_days() -> Vec<&'static str> {
     vec![
@@ -11,7 +11,7 @@ pub fn default_on_days() -> Vec<&'static str> {
         "Sunday",
     ]
 }
-pub fn get_day_name(date: NaiveDate) -> String {
+pub fn get_day_name(date: NaiveDateTime) -> String {
     // Format the date to include the day name
     let formatted_date = date.format("%a").to_string();
 
