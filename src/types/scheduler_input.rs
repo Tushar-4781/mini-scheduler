@@ -2,11 +2,10 @@ use chrono::NaiveDateTime;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-
 #[derive(Debug, Deserialize, Clone)]
 pub struct SIFilters {
-    pub after_time: u32,
-    pub before_time: u32,
+    pub after_time: i32,
+    pub before_time: i32,
     pub on_days: Option<Vec<String>>,
     pub not_on: Option<Vec<String>>,
 }
@@ -15,11 +14,12 @@ pub struct SIFilters {
 pub struct SIGoal {
     pub id: String,
     pub title: String,
-    pub min_duration: u32,
+    pub min_duration: i32,
     pub start: Option<NaiveDateTime>,
     pub deadline: Option<NaiveDateTime>,
     pub repeat: Option<String>,
     pub filters: Option<SIFilters>,
+    pub created_at: NaiveDateTime,
 }
 #[derive(Debug, Deserialize)]
 pub struct SchedulerInput {
