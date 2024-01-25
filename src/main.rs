@@ -11,13 +11,9 @@ use utils::json_reader::read_json;
 
 use crate::{
     tasks::generator::generate_tasks,
-    types::scheduler_engine::{TBufferMap, TDueHrsMap},
+    types::scheduler_engine::{TBlockingSlotsMap, TBufferMap, TDueHrsMap, TFlexibleWeeklyGoals},
 };
 
-fn print(mut x: i32) {
-    x = x + 2;
-    println!("{}", x);
-}
 fn main() {
     let file_path = "./src/tests/input.json";
     let schedule: SchedulerInput = read_json(file_path);
@@ -34,10 +30,18 @@ fn main() {
     ];
     let mut buffer: TBufferMap = HashMap::new();
     let mut due_task_hrs: TDueHrsMap = HashMap::new();
-    generate_tasks(schedule, &mut calendar, &mut buffer, &mut due_task_hrs);
-    let mut x = 2;
-    print(x);
-    println!("{}", x);
+    let mut flexible_weekly_goals: TFlexibleWeeklyGoals = Vec::new();
+    let mut blocking_slots: TBlockingSlotsMap = HashMap::new();
+
+    generate_tasks(
+        schedule,
+        &mut calendar,
+        &mut buffer,
+        &mut due_task_hrs,
+        &mut blocking_slots,
+        &mut flexible_weekly_goals,
+    );
+
     // println!("{:#?}", schedule);
     // Now you can use the schedule struct as needed
 }

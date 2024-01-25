@@ -1,5 +1,4 @@
-use chrono::NaiveDateTime;
-use serde_json::map::OccupiedEntry;
+use chrono::{Duration, NaiveDateTime};
 use uuid::Uuid;
 
 use crate::{
@@ -11,19 +10,20 @@ use crate::{
     utils::constants::get_day_name,
 };
 
-pub fn processBudgetGoal(
+pub fn process_budget_goal(
     calendar: &mut Vec<Vec<Slot>>,
     buffer_map: &mut TBufferMap,
     due_hrs_map: &mut TDueHrsMap,
     goal: &SIGoal,
     valid_days: Vec<String>,
-    min: i32,
+    input_duration: i32,
     min_duration: i32,
     start_date: NaiveDateTime,
 ) {
-    let tmp_start = start_date;
-    let total_duration = min;
-    let created_at = goal.created_at.clone();
+    let mut tmp_start = start_date.clone();
+    let mut total_duration = input_duration;
+
+    // let created_at = goal.created_at.clone();
     let deadline = {
         if goal.deadline.is_some() {
             goal.deadline.clone()
@@ -35,9 +35,9 @@ pub fn processBudgetGoal(
         if deadline.is_some() && deadline < Some(tmp_start) {
             break;
         }
-        let dayItr = get_day_name(tmp_start);
+        let day_itr = get_day_name(tmp_start);
 
-        if valid_days.contains(&dayItr) {
+        if valid_days.contains(&day_itr) {
             calendar[key + 1].push(Slot {
                 goalid: goal.id.clone(),
                 taskid: Uuid::new_v4(),
@@ -45,14 +45,14 @@ pub fn processBudgetGoal(
                 start: goal.filters.as_ref().unwrap().after_time,
                 deadline: goal.filters.as_ref().unwrap().after_time,
                 duration: {
-                    if min > total_duration {
+                    if min_duration > total_duration {
                         total_duration
                     } else {
-                        min
+                        min_duration
                     }
                 },
             });
-            if min > total_duration {
+            if min_duration > total_duration {
                 let entry = buffer_map.entry(goal.id.clone());
                 // Matching on the Entry enum to handle both cases
                 let buffer = match entry {
@@ -67,21 +67,32 @@ pub fn processBudgetGoal(
                 };
                 buffer.push(TBuffer {
                     next_buffer: key as i32 + 1,
-                    available_buffer: min - total_duration,
+                    available_buffer: min_duration - total_duration,
                 })
             }
+
             if total_duration >= 0 {
-                let entry = due_hrs_map.entry(goal.id.clone());
-                match entry {
-                    std::collections::hash_map::Entry::Occupied(mut occupied) => {
-                        // Key exists, increment its value
-                        *occupied.get_mut() += total_duration;
-                    }
-                    std::collections::hash_map::Entry::Vacant(vacant) => {
-                        // Key doesn't exist, set its value to 0
-                        vacant.insert(total_duration);
+                total_duration -= {
+                    if min_duration > total_duration {
+                        total_duration
+                    } else {
+                        min_duration
                     }
                 }
+            }
+        }
+        tmp_start += Duration::days(1);
+    }
+    if total_duration >= 0 {
+        let entry = due_hrs_map.entry(goal.id.clone());
+        match entry {
+            std::collections::hash_map::Entry::Occupied(mut occupied) => {
+                // Key exists, increment its value
+                *occupied.get_mut() += total_duration;
+            }
+            std::collections::hash_map::Entry::Vacant(vacant) => {
+                // Key doesn't exist, set its value to 0
+                vacant.insert(total_duration);
             }
         }
     }

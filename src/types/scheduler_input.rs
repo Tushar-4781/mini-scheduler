@@ -3,6 +3,19 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Clone)]
+pub enum BudgetType {
+    Daily,
+    Weekly,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct SIBudget {
+    pub budget_type: BudgetType,
+    pub min: i32,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+
 pub struct SIFilters {
     pub after_time: i32,
     pub before_time: i32,
@@ -20,6 +33,7 @@ pub struct SIGoal {
     pub repeat: Option<String>,
     pub filters: Option<SIFilters>,
     pub created_at: NaiveDateTime,
+    pub budgets: Option<Vec<SIBudget>>,
 }
 #[derive(Debug, Deserialize)]
 pub struct SchedulerInput {

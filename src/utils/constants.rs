@@ -1,4 +1,4 @@
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::NaiveDateTime;
 
 pub fn default_on_days() -> Vec<&'static str> {
     vec![

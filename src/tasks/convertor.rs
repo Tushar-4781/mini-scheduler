@@ -2,9 +2,9 @@ use chrono::NaiveDateTime;
 use uuid::Uuid;
 
 use crate::{
-    tasks::processor::processBudgetGoal,
+    tasks::processor::process_budget_goal,
     types::{
-        scheduler_engine::{TBufferMap, TDueHrsMap},
+        scheduler_engine::{FlexibleWeeklyGoal, TBufferMap, TDueHrsMap, TFlexibleWeeklyGoals},
         scheduler_input::{SIFilters, SIGoal},
         scheduler_output::Slot, // scheduler_output::Slot,
     },
@@ -33,6 +33,7 @@ pub fn convert_into_task(
     mut calendar: &mut Vec<Vec<Slot>>,
     mut buffer: &mut TBufferMap,
     mut due_task_hrs: &mut TDueHrsMap,
+    flexible_weekly_goals: &mut TFlexibleWeeklyGoals,
     start_date: &NaiveDateTime,
 ) {
     // Create a GoalFilters instance with default values
@@ -58,21 +59,26 @@ pub fn convert_into_task(
         .is_some()
         || goal.repeat.is_some()
     {
+        let task = Slot {
+            taskid: Uuid::new_v4(),
+            goalid: goal.id.clone(),
+            title: goal.title.clone(),
+            start: filters.after_time,
+            deadline: filters.before_time,
+            duration: goal.min_duration,
+        };
         if goal.repeat.as_ref().unwrap() == "daily" {
-            let task = Slot {
-                taskid: Uuid::new_v4(),
-                goalid: goal.id.clone(),
-                title: goal.title.clone(),
-                start: filters.after_time,
-                deadline: filters.before_time,
-                duration: goal.min_duration,
-            };
             for key in 0..=6 {
                 calendar[key].push(task.clone());
             }
+        } else if goal.budgets.is_none() {
+            flexible_weekly_goals.push(FlexibleWeeklyGoal {
+                valid_days: valid_days.clone(),
+                slot: task.clone(),
+            })
         }
     } else {
-        processBudgetGoal(
+        process_budget_goal(
             &mut calendar,
             &mut buffer,
             &mut due_task_hrs,
@@ -83,5 +89,4 @@ pub fn convert_into_task(
             start_date.clone(),
         );
     }
-    println!("{:?}", valid_days);
 }
