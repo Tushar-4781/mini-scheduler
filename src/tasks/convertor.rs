@@ -1,10 +1,12 @@
+use chrono::NaiveDateTime;
 use uuid::Uuid;
 
 use crate::{
+    tasks::processor::processBudgetGoal,
     types::{
+        scheduler_engine::{TBufferMap, TDueHrsMap},
         scheduler_input::{SIFilters, SIGoal},
-        scheduler_output::Slot,
-        // scheduler_output::Slot,
+        scheduler_output::Slot, // scheduler_output::Slot,
     },
     utils::constants::default_on_days,
 };
@@ -26,7 +28,13 @@ fn extract_filters(goal: &SIGoal) -> SIFilters {
             not_on: Some(Vec::new()),
         })
 }
-pub fn convert_into_task(goal: &SIGoal, calendar: &mut Vec<Vec<Slot>>) {
+pub fn convert_into_task(
+    goal: &SIGoal,
+    mut calendar: &mut Vec<Vec<Slot>>,
+    mut buffer: &mut TBufferMap,
+    mut due_task_hrs: &mut TDueHrsMap,
+    start_date: &NaiveDateTime,
+) {
     // Create a GoalFilters instance with default values
     let filters = extract_filters(&goal);
     let on_days = filters
@@ -63,6 +71,17 @@ pub fn convert_into_task(goal: &SIGoal, calendar: &mut Vec<Vec<Slot>>) {
                 calendar[key].push(task.clone());
             }
         }
+    } else {
+        processBudgetGoal(
+            &mut calendar,
+            &mut buffer,
+            &mut due_task_hrs,
+            goal,
+            valid_days.clone(),
+            goal.min_duration,
+            goal.min_duration,
+            start_date.clone(),
+        );
     }
     println!("{:?}", valid_days);
 }
