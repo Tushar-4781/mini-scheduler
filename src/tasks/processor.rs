@@ -36,14 +36,16 @@ pub fn process_budget_goal(
             break;
         }
         let day_itr = get_day_name(tmp_start);
+        println!("{:#?}", valid_days);
+        println!("{:#?}", day_itr);
 
         if valid_days.contains(&day_itr) {
             calendar[key + 1].push(Slot {
                 goalid: goal.id.clone(),
-                taskid: Uuid::new_v4(),
+                taskid: Uuid::new_v4().to_string(),
                 title: goal.title.clone(),
                 start: goal.filters.as_ref().unwrap().after_time,
-                deadline: goal.filters.as_ref().unwrap().after_time,
+                deadline: goal.filters.as_ref().unwrap().before_time,
                 duration: {
                     if min_duration > total_duration {
                         total_duration
