@@ -1,15 +1,7 @@
 use chrono::NaiveDateTime;
 
 pub fn default_on_days() -> Vec<&'static str> {
-    vec![
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ]
+    vec!["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 }
 pub fn get_day_name(date: NaiveDateTime) -> String {
     // Format the date to include the day name
