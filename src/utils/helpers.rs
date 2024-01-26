@@ -1,13 +1,11 @@
-use chrono::{DateTime, Datelike, Local, NaiveDate, TimeZone, Utc};
+use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime};
 
-pub fn format_date(date: i32, hour: i32) -> String {
+pub fn new_date(date: i32, hour: i32) -> NaiveDateTime {
     let local: DateTime<Local> = Local::now();
-
-    let formatted_date_time =
-        Local
-            .ymd(local.year(), local.month(), date.into())
-            .and_hms(hour.into(), 0, 0);
-
-    let formatted_string = formatted_date_time.format("%Y-%m-%dT%H:00:00").;
-    formatted_string
+    let year = local.year();
+    let month = local.month();
+    let date: NaiveDate = NaiveDate::from_ymd_opt(year, month, date as u32).unwrap();
+    let time: NaiveTime = NaiveTime::from_hms_opt(hour as u32, 0, 0).unwrap();
+    let date_time: NaiveDateTime = NaiveDateTime::new(date, time);
+    date_time
 }
