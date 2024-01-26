@@ -1,3 +1,5 @@
+use chrono::NaiveDateTime;
+
 use crate::{
     tasks::splitter::split_goal,
     types::{
@@ -5,6 +7,7 @@ use crate::{
         scheduler_input::SchedulerInput,
         scheduler_output::Slot,
     },
+    utils::helpers::format_date,
 };
 
 use super::convertor::convert_into_task;
@@ -43,4 +46,22 @@ pub fn generate_tasks(
             ],
         );
     }
+}
+
+pub fn push_impossible_task(task: Slot, start_date: NaiveDateTime, day: i32, start: i32, end: i32) {
+    let predicted_deadline = start + task.duration;
+    let actual_deadline = {
+        if task.deadline < predicted_deadline && task.deadline < end {
+            task.deadline
+        } else if predicted_deadline > end {
+            if end > task.deadline {
+                task.deadline
+            } else {
+                end
+            }
+        } else {
+            predicted_deadline
+        }
+    };
+    task.start = format_date(start_date, hour)
 }
