@@ -11,7 +11,10 @@ use utils::json_reader::read_json;
 
 use crate::{
     tasks::generator::generate_tasks,
-    types::scheduler_engine::{TBlockingSlotsMap, TBufferMap, TDueHrsMap, TFlexibleWeeklyGoals},
+    types::{
+        scheduler_engine::{TBlockingSlotsMap, TBufferMap, TDueHrsMap, TFlexibleWeeklyGoals},
+        scheduler_output::JSOutputSlots,
+    },
 };
 
 fn main() {
@@ -33,6 +36,9 @@ fn main() {
     let mut flexible_weekly_goals: TFlexibleWeeklyGoals = Vec::new();
     let mut blocking_slots: TBlockingSlotsMap = HashMap::new();
 
+    let mut scheduled: Vec<JSOutputSlots> = Vec::new();
+    let mut impossible: Vec<JSOutputSlots> = Vec::new();
+
     generate_tasks(
         schedule,
         &mut calendar,
@@ -42,6 +48,28 @@ fn main() {
         &mut flexible_weekly_goals,
     );
 
-    // println!("{:#?}", schedule);
+    for key in 0..=6 {
+        scheduled.insert(
+            key,
+            JSOutputSlots {
+                day: key as i32,
+                outputs: Vec::new(),
+            },
+        );
+        impossible.insert(
+            key,
+            JSOutputSlots {
+                day: key as i32,
+                outputs: Vec::new(),
+            },
+        );
+    }
+    let mut dayItr = schedule.start_date.clone();
+    for key in 0..=6 {
+        let mut hrs_of_the_day: Vec<i32> = vec![-1; 24];
+    }
+
+    println!("{:#?}", calendar);
+
     // Now you can use the schedule struct as needed
 }
