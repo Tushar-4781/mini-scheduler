@@ -60,5 +60,6 @@ pub fn operator(
                 current_buffer.remove(0);
             }
         }
+        if (slot.duration > 0) {}
     }
 }
