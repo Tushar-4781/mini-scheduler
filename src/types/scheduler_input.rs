@@ -35,7 +35,8 @@ pub struct SIGoal {
     pub created_at: NaiveDateTime,
     pub budgets: Option<Vec<SIBudget>>,
 }
-#[derive(Debug, Deserialize)]
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct SchedulerInput {
     pub start_date: NaiveDateTime,
     pub end_date: NaiveDateTime,
