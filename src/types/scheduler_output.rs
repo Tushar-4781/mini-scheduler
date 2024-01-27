@@ -31,3 +31,9 @@ pub struct SchedulerOutput {
     pub scheduled: Vec<JSOutputSlots>,
     pub impossible: Vec<JSOutputSlots>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct FinalJSOutputSlot {
+    pub day: String,
+    pub tasks: Vec<OutputSlot>,
+}

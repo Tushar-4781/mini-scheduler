@@ -34,6 +34,7 @@ pub struct SIGoal {
     pub filters: Option<SIFilters>,
     pub created_at: NaiveDateTime,
     pub budgets: Option<Vec<SIBudget>>,
+    pub children: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]

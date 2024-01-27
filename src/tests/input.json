@@ -1,54 +1,54 @@
 {
-  "start_date": "2022-01-01T00:00:00",
-  "end_date": "2022-01-02T00:00:00",
+  "start_date": "2024-01-01T00:00:00",
+  "end_date": "2024-01-02T00:00:00",
   "goals": {
     "1": {
       "id": "1",
       "title": "shopping",
       "min_duration": 2,
-      "start": "2022-01-01T00:00:00",
-      "deadline": "2022-01-02T00:00:00",
+      "start": "2024-01-01T00:00:00",
+      "deadline": "2024-01-02T00:00:00",
       "filters": {
         "after_time": 9,
         "before_time": 15
       },
-      "created_at": "2022-01-01T00:00:00"
+      "created_at": "2024-01-01T00:00:00"
     },
     "2": {
       "id": "2",
       "title": "dentist",
       "min_duration": 1,
-      "start": "2022-01-01T00:00:00",
-      "deadline": "2022-01-02T00:00:00",
+      "start": "2024-01-01T00:00:00",
+      "deadline": "2024-01-02T00:00:00",
       "filters": {
         "after_time": 10,
         "before_time": 11
       },
-      "created_at": "2022-01-01T00:00:00"
+      "created_at": "2024-01-01T00:00:00"
     },
     "3": {
       "id": "3",
       "title": "Visit friend",
       "min_duration": 2,
-      "start": "2022-01-01T00:00:00",
-      "deadline": "2022-01-02T00:00:00",
+      "start": "2024-01-01T00:00:00",
+      "deadline": "2024-01-02T00:00:00",
       "filters": {
         "after_time": 10,
         "before_time": 16
       },
-      "created_at": "2022-01-01T00:00:00"
+      "created_at": "2024-01-01T00:00:00"
     },
     "4": {
       "id": "4",
       "title": "lunch",
       "min_duration": 1,
-      "start": "2022-01-01T00:00:00",
-      "deadline": "2022-01-02T00:00:00",
+      "start": "2024-01-01T00:00:00",
+      "deadline": "2024-01-02T00:00:00",
       "filters": {
         "after_time": 12,
         "before_time": 14
       },
-      "created_at": "2022-01-01T00:00:00"
+      "created_at": "2024-01-01T00:00:00"
     }
   }
 }

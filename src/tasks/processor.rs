@@ -36,8 +36,6 @@ pub fn process_budget_goal(
             break;
         }
         let day_itr = get_day_name(tmp_start);
-        println!("{:#?}", valid_days);
-        println!("{:#?}", day_itr);
 
         if valid_days.contains(&day_itr) {
             calendar[key + 1].push(Slot {

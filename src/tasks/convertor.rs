@@ -60,7 +60,7 @@ pub fn convert_into_task(
         || goal.repeat.is_some()
     {
         let task = Slot {
-            taskid: Uuid::new_v4(),
+            taskid: Uuid::new_v4().to_string(),
             goalid: goal.id.clone(),
             title: goal.title.clone(),
             start: filters.after_time,

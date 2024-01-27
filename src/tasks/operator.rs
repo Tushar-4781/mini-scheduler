@@ -1,17 +1,21 @@
 use chrono::NaiveDateTime;
 
 use crate::types::{
-    scheduler_engine::{TBufferMap, TDueHrsMap},
-    scheduler_output::Slot,
+    scheduler_engine::{TBlockingSlotsMap, TBufferMap, TDueHrsMap},
+    scheduler_output::{JSOutputSlots, Slot},
 };
 
-pub fn operator(
+use super::scheduler::schedule_task;
+
+pub fn task_operator(
     day: usize,
-    hrs_of_the_day: Vec<i32>,
+    mut hrs_of_the_day: &mut Vec<i32>,
     calendar: &mut Vec<Vec<Slot>>,
-    due_task_hrs: &mut TDueHrsMap,
-    bufferMap: &mut TBufferMap,
+    mut due_task_hrs: &mut TDueHrsMap,
+    buffer_map: &mut TBufferMap,
     start_date: NaiveDateTime,
+    mut scheduled: &mut Vec<JSOutputSlots>,
+    mut blocking_slots_map: &mut TBlockingSlotsMap,
 ) {
     let schedule_of_the_day = calendar.get_mut(day).unwrap();
 
@@ -39,7 +43,7 @@ pub fn operator(
         // if past_due.is_some() && past_due.unwrap() > &mut 0 {
         if let Some(past_due) = due_task_hrs.get_mut(&slot.goalid) {
             if past_due > &mut 0 {
-                if let Some(current_buffer) = bufferMap.get_mut(&slot.goalid) {
+                if let Some(current_buffer) = buffer_map.get_mut(&slot.goalid) {
                     if current_buffer.len() > 0 && current_buffer[0].next_buffer == day as i32 {
                         let mut buffer_for_this_day = current_buffer[0].available_buffer;
                         if past_due >= &mut buffer_for_this_day {
@@ -55,11 +59,23 @@ pub fn operator(
                 }
             }
         }
-        if let Some(current_buffer) = bufferMap.get_mut(&slot.goalid) {
-            if (current_buffer.len() > 0 && current_buffer[0].next_buffer == day as i32) {
+        if let Some(current_buffer) = buffer_map.get_mut(&slot.goalid) {
+            if current_buffer.len() > 0 && current_buffer[0].next_buffer == day as i32 {
                 current_buffer.remove(0);
             }
         }
-        if (slot.duration > 0) {}
+        if slot.duration > 0 {
+            let mut slot_copy = slot.clone();
+            slot_copy.duration = duration;
+            schedule_task(
+                slot_copy,
+                day as i32,
+                start_date.clone(),
+                &mut hrs_of_the_day,
+                &mut due_task_hrs,
+                &mut blocking_slots_map,
+                &mut scheduled,
+            )
+        }
     }
 }
